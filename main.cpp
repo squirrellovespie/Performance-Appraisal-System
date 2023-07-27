@@ -28,7 +28,7 @@ void copyArray(string source[], string destination[], int size)
     }
 }
 
-vector<TeamMember> deepCopyVector(const vector<TeamMember>& sourceVector) 
+vector<TeamMember> deepCopyVector(const vector<TeamMember> sourceVector) 
 {
     vector<TeamMember> deepCopiedVector;
 
@@ -130,7 +130,18 @@ int main ()
     tm3.name = "Ryan";
     developers.push_back(tm3);
 
-    vector<TeamMember> devmgr = deepCopyVector(developers);
+    vector<TeamMember> devmgr;
+    TeamMember tmm1;
+    tmm1.name = "Alice";
+    devmgr.push_back(tmm1);
+    TeamMember tmm2;
+    tmm2.name = "Bob";
+    devmgr.push_back(tmm2);
+    TeamMember tmm3;
+    tmm3.name = "Ryan";
+    devmgr.push_back(tmm3);
+    //vector<TeamMember> devmgr = deepCopyVector(developers);
+
     vector<nRating> devhr;
     nRating m1,m2,m3;
     m1.name = tm1.name;
@@ -143,7 +154,7 @@ int main ()
 
     vector<TeamMember> designers;
     TeamMember tm4;
-    tm4.name = "Alisha";
+    tm4.name = "Alex";
     designers.push_back(tm4);
     TeamMember tm5;
     tm5.name = "Bobby";
@@ -152,7 +163,18 @@ int main ()
     tm6.name = "Ron";
     designers.push_back(tm6);
 
-    vector<TeamMember> dsgmgr = deepCopyVector(designers);
+    vector<TeamMember> dsgmgr;
+    TeamMember tmm4;
+    tmm4.name = "Alex";
+    dsgmgr.push_back(tmm4);
+    TeamMember tmm5;
+    tmm5.name = "Bobby";
+    dsgmgr.push_back(tmm5);
+    TeamMember tmm6;
+    tmm6.name = "Ron";
+    dsgmgr.push_back(tmm6);
+    //vector<TeamMember> dsgmgr = deepCopyVector(designers);
+    
     vector<nRating> dsghr;
     nRating m4,m5,m6;
     m4.name = tm4.name;
@@ -173,7 +195,18 @@ int main ()
     tm9.name = "Rick";
     architects.push_back(tm9);
 
-    vector<TeamMember> arcmgr = deepCopyVector(architects);
+    vector<TeamMember> arcmgr;
+    TeamMember tmm7;
+    tmm7.name = "Ally";
+    arcmgr.push_back(tmm7);
+    TeamMember tmm8;
+    tmm8.name = "Brown";
+    arcmgr.push_back(tmm8);
+    TeamMember tmm9;
+    tmm9.name = "Rick";
+    arcmgr.push_back(tmm9);
+    //vector<TeamMember> arcmgr = deepCopyVector(architects);
+
     vector<nRating> archr;
     nRating m7,m8,m9;
     m7.name = tm7.name;
@@ -211,9 +244,25 @@ int main ()
             if (!(mgr_choice>=1 && mgr_choice<=4)) continue;
             vector<TeamMember> mgr_arr;
             int mgr_type;
-            mgr_choice==1 ? mgr_arr.assign(devmgr.begin(), devmgr.end()) : mgr_choice==2 ? mgr_arr.assign(dsgmgr.begin(), dsgmgr.end()) : mgr_arr.assign(arcmgr.begin(), arcmgr.end());
+            //mgr_choice==1 ? mgr_arr.assign(devmgr.begin(), devmgr.end()) : mgr_choice==2 ? mgr_arr.assign(dsgmgr.begin(), dsgmgr.end()) : mgr_arr.assign(arcmgr.begin(), arcmgr.end());
+            if (mgr_choice == 1)
+            {
+                mgr_arr = deepCopyVector(devmgr);
+            }
+            else
+            {
+                if (mgr_choice == 2)
+                {
+                    mgr_arr = deepCopyVector(dsgmgr);
+                }
+                else
+                {
+                    mgr_arr = deepCopyVector(arcmgr);
+                }
+            }
             mgr_choice==1 ? mgr_type=1 : mgr_choice==2 ? mgr_type=2 : mgr_type=3;
             int out = inputRatings(mgr_arr, mgr_type);
+            mgr_choice==1 ? devmgr.assign(mgr_arr.begin(), mgr_arr.end()) : mgr_choice==2 ? dsgmgr.assign(mgr_arr.begin(), mgr_arr.end()) : arcmgr.assign(mgr_arr.begin(), mgr_arr.end());
             if (out == 2) cout << "Ratings Updated!\n";
             else if (out == 1) break;
             else if (out == 0) 
@@ -284,7 +333,7 @@ int main ()
                 for (int i = 0; i < 3; i++)
                 {
                     cout << devmgr[i].name << ":\n";
-                    printRatings(developers[i],1);
+                    printRatings(devmgr[i],1);
                 }
             }
             else if (hr_choice == 2)
