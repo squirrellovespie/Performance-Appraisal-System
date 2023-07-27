@@ -40,7 +40,7 @@ vector<TeamMember> deepCopyVector(const vector<TeamMember>& sourceVector)
     return deepCopiedVector;
 }
 
-int inputRatings(vector<TeamMember> members, int type)
+int inputRatings(vector<TeamMember>& members, int type)
 {
     cout << "Select name:\n";
     for (size_t i = 0; i < members.size(); i++) 
@@ -88,7 +88,7 @@ int inputRatings(vector<TeamMember> members, int type)
             cout << "Enter rating for " << arr[i] << ": ";
             int r;
             cin >> r;
-            members[2].ratings[i] = r;
+            members[1].ratings[i] = r;
         }
         cout << "Enter overall rating: ";
         int o;
@@ -112,12 +112,78 @@ void printRatings(TeamMember tm, int type)
     type==1 ? copyArray(Dev_tasks,arr,3) : type==2 ? copyArray(Dsg_tasks,arr,3) : copyArray(Arc_tasks,arr,3);
     for (int i = 0; i < 3; i++)
     {
-        cout << arr[i] << tm.ratings[i] << "\n";
+        cout << arr[i] << "\t" << tm.ratings[i] << "\n";
     }
 }
 
 int main ()
 {
+    //HARD CODED
+    vector<TeamMember> developers;
+    TeamMember tm1;
+    tm1.name = "Alice";
+    developers.push_back(tm1);
+    TeamMember tm2;
+    tm2.name = "Bob";
+    developers.push_back(tm2);
+    TeamMember tm3;
+    tm3.name = "Ryan";
+    developers.push_back(tm3);
+
+    vector<TeamMember> devmgr = deepCopyVector(developers);
+    vector<nRating> devhr;
+    nRating m1,m2,m3;
+    m1.name = tm1.name;
+    m2.name = tm2.name;
+    m3.name = tm3.name;
+    devhr.push_back(m1);
+    devhr.push_back(m2);
+    devhr.push_back(m3);
+
+
+    vector<TeamMember> designers;
+    TeamMember tm4;
+    tm4.name = "Alisha";
+    designers.push_back(tm4);
+    TeamMember tm5;
+    tm5.name = "Bobby";
+    designers.push_back(tm5);
+    TeamMember tm6;
+    tm6.name = "Ron";
+    designers.push_back(tm6);
+
+    vector<TeamMember> dsgmgr = deepCopyVector(designers);
+    vector<nRating> dsghr;
+    nRating m4,m5,m6;
+    m4.name = tm4.name;
+    m5.name = tm5.name;
+    m6.name = tm6.name;
+    dsghr.push_back(m4);
+    dsghr.push_back(m5);
+    dsghr.push_back(m6);
+
+    vector<TeamMember> architects;
+    TeamMember tm7;
+    tm7.name = "Ally";
+    architects.push_back(tm7);
+    TeamMember tm8;
+    tm8.name = "Brown";
+    architects.push_back(tm8);
+    TeamMember tm9;
+    tm9.name = "Rick";
+    architects.push_back(tm9);
+
+    vector<TeamMember> arcmgr = deepCopyVector(architects);
+    vector<nRating> archr;
+    nRating m7,m8,m9;
+    m7.name = tm7.name;
+    m8.name = tm8.name;
+    m9.name = tm9.name;
+    archr.push_back(m7);
+    archr.push_back(m8);
+    archr.push_back(m9);
+
+
     while (true) {
         cout << "PERFORMANCE APPRAISAL SYSTEM\n";
         cout << "1. Manager\n";
@@ -131,70 +197,6 @@ int main ()
         int choice;
         cin >> choice;
 
-        vector<TeamMember> developers;
-        TeamMember tm1;
-        tm1.name = "Alice";
-        developers.push_back(tm1);
-        TeamMember tm2;
-        tm2.name = "Bob";
-        developers.push_back(tm2);
-        TeamMember tm3;
-        tm3.name = "Ryan";
-        developers.push_back(tm3);
-
-        vector<TeamMember> devmgr = deepCopyVector(developers);
-        vector<nRating> devhr;
-        nRating m1,m2,m3;
-        m1.name = tm1.name;
-        m2.name = tm2.name;
-        m3.name = tm3.name;
-        devhr.push_back(m1);
-        devhr.push_back(m2);
-        devhr.push_back(m3);
-
-
-        vector<TeamMember> designers;
-        TeamMember tm4;
-        tm4.name = "Alisha";
-        designers.push_back(tm4);
-        TeamMember tm5;
-        tm5.name = "Bobby";
-        designers.push_back(tm5);
-        TeamMember tm6;
-        tm6.name = "Ron";
-        designers.push_back(tm6);
-
-        vector<TeamMember> dsgmgr = deepCopyVector(designers);
-        vector<nRating> dsghr;
-        nRating m4,m5,m6;
-        m4.name = tm4.name;
-        m5.name = tm5.name;
-        m6.name = tm6.name;
-        dsghr.push_back(m4);
-        dsghr.push_back(m5);
-        dsghr.push_back(m6);
-
-        vector<TeamMember> architects;
-        TeamMember tm7;
-        tm7.name = "Ally";
-        architects.push_back(tm7);
-        TeamMember tm8;
-        tm8.name = "Brown";
-        architects.push_back(tm8);
-        TeamMember tm9;
-        tm9.name = "Rick";
-        architects.push_back(tm9);
-
-        vector<TeamMember> arcmgr = deepCopyVector(architects);
-        vector<nRating> archr;
-        nRating m7,m8,m9;
-        m7.name = tm7.name;
-        m8.name = tm8.name;
-        m9.name = tm9.name;
-        archr.push_back(m7);
-        archr.push_back(m8);
-        archr.push_back(m9);
-
         if (choice == 1)
         {
             cout << "Which team manager are you?\n";
@@ -205,8 +207,8 @@ int main ()
             cout << "Enter choice: ";
             int mgr_choice;
             cin >> mgr_choice;
-            /*if (mgr_choice == 4) break;
-            if ()  EXITING AND ERROR COND*/
+            if (mgr_choice == 4) break;
+            if (!(mgr_choice>=1 && mgr_choice<=4)) continue;
             vector<TeamMember> mgr_arr;
             int mgr_type;
             mgr_choice==1 ? mgr_arr.assign(devmgr.begin(), devmgr.end()) : mgr_choice==2 ? mgr_arr.assign(dsgmgr.begin(), dsgmgr.end()) : mgr_arr.assign(arcmgr.begin(), arcmgr.end());
