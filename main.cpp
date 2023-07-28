@@ -5,7 +5,7 @@
 #include <fstream>
 #include <string>
 using namespace std;
-//ENV VAR PART
+//ENV VAR PART/*
 std::string getFolderPathFromEnvVar(const char* envVarName) {
     char* envVarValue = std::getenv(envVarName);
     if (envVarValue == nullptr) {
@@ -85,10 +85,31 @@ public:
     void inputSelfRatings() override {
         for (int i = 0; i < 3; i++) {
             cout << "Enter rating for " << getTaskName(i) << ": ";
-            cin >> Selfratings[i];
+            int rating;
+            int rate3;
+            cin >> rating;
+
+            while(cin.fail() || rating>5 || rating<1)
+                    {
+                        cout<<"Invalid enter a value between 1 and 5: ";
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(),'\n');
+                        cin>>rating;
+                    }
+            Selfratings[i]=rating;
         }
         cout << "Enter overall rating: ";
-        cin >> Selfratings[3];
+        int rate3;
+        cin >> rate3;
+
+        if(cin.fail() || rate3>5 || rate3<1)
+             {
+                cout<<"Invalid enter a value between 1 and 5: ";
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(),'\n');
+                cin>>rate3;
+                    }
+            Selfratings[3]=rate3;
         devf++;
     }
 
@@ -108,6 +129,10 @@ public:
 
 private:
     string getTaskName(int i) const override {
+        if(i==3)
+        {
+            Dev_tasks[3]="Overall Rating";
+        }
         return Dev_tasks[i];
     }
 };
@@ -123,18 +148,41 @@ public:
     void inputSelfRatings() override {
         for (int i = 0; i < 3; i++) {
             cout << "Enter rating for " << getTaskName(i) << ": ";
-            cin >> Selfratings[i];
+            int rating;
+            int rate3;
+            cin >> rating;
+
+            while(cin.fail() || rating>5 || rating<1)
+                    {
+                        cout<<"Invalid enter a value between 1 and 5: ";
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(),'\n');
+                        cin>>rating;
+                    }
+            Selfratings[i]=rating;
         }
         cout << "Enter overall rating: ";
-        cin >> Selfratings[3];
+        int rate3;
+        cin >> rate3;
+
+        if(cin.fail() || rate3>5 || rate3<1)
+             {
+                cout<<"Invalid enter a value between 1 and 5: ";
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(),'\n');
+                cin>>rate3;
+                    }
+            Selfratings[3]=rate3;
         dsf++;
     }
     void printRatings(const vector<TeamMember*>& employees) {
-        cout << "Ratings for Designers:\n";
+         cout<<"-------------------------";
+        cout << "\nRatings for Designers:\n";
+         cout<<"-------------------------";
         for (const auto& employee : employees) {
             Designer* dev = dynamic_cast<Designer*>(employee);
             if (dev) {
-                cout << "Designer: " << dev->getName() << endl;
+                cout << "\nDesigner: " << dev->getName() << endl;
                 dev->TeamMember::printSelfRatings(); // Call base class function to print ratings
                 cout << endl;
             } else {
@@ -145,6 +193,9 @@ public:
 
 private:
     string getTaskName(int i) const override {
+        if(i==3){
+            Dsg_tasks[3]="Overall Ratings";
+        }
         return Dsg_tasks[i];
     }
 };
@@ -160,18 +211,42 @@ public:
     void inputSelfRatings() override {
         for (int i = 0; i < 3; i++) {
             cout << "Enter rating for " << getTaskName(i) << ": ";
-            cin >> Selfratings[i];
+            int rating;
+            int rate3;
+            cin >> rating;
+
+            while(cin.fail() || rating>5 || rating<1)
+                    {
+                        cout<<"Invalid enter a value between 1 and 5: ";
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(),'\n');
+                        cin>>rating;
+                    }
+            Selfratings[i]=rating;
+
         }
         cout << "Enter overall rating: ";
-        cin >> Selfratings[3];
+        int rate3;
+        cin >> rate3;
+
+        if(cin.fail() || rate3>5 || rate3<1)
+             {
+                cout<<"Invalid enter a value between 1 and 5: ";
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(),'\n');
+                cin>>rate3;
+                    }
+            Selfratings[3]=rate3;
         arf++;
     }
     void printRatings(const vector<TeamMember*>& employees) {
-        cout << "Ratings for Architects:\n";
+        cout<<"-------------------------";
+        cout << "\nRatings for Architects:\n";
+        cout<<"-------------------------";
         for (const auto& employee : employees) {
             Architect* dev = dynamic_cast<Architect*>(employee);
             if (dev) {
-                cout << "Architect: " << dev->getName() << endl;
+                cout << "\nArchitect: " << dev->getName() << endl;
                 dev->TeamMember::printSelfRatings(); // Call base class function to print ratings
                 cout << endl;
             } else {
@@ -182,6 +257,9 @@ public:
 
 private:
     string getTaskName(int i) const override {
+        if(i==3){
+            Arc_tasks[3]="Overall Ratings";
+        }
         return Arc_tasks[i];
     }
 };
@@ -206,10 +284,31 @@ public:
             TeamMember* selectedEmployee = employees[empno - 1];
             for (int i = 0; i < 3; i++) {
                 cout << "Enter rating for " << selectedEmployee->getTaskName(i) << ": ";
-                cin >> selectedEmployee->managerRatings[i];
+                int rating;
+                int rate3;
+                cin >> rating;
+
+                while(cin.fail() || rating>5 || rating<1)
+                    {
+                        cout<<"Invalid enter a value between 1 and 5: ";
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(),'\n');
+                        cin>>rating;
+                    }
+                selectedEmployee->managerRatings[i]=rating;
             }
             cout << "Enter overall rating: ";
-            cin >> selectedEmployee->managerRatings[3];
+            int rate3;
+            cin >> rate3;
+            if(cin.fail() || rate3>5 || rate3<1)
+                    {
+                        cout<<"Invalid enter a value between 1 and 5: ";
+                        cin.clear();
+                        cin.ignore(numeric_limits<streamsize>::max(),'\n');
+                        cin>>rate3;
+                    }
+                selectedEmployee->managerRatings[3]=rate3;
+
         } else {
             cout << "Invalid employee choice.\n";
         }
@@ -392,13 +491,13 @@ void printDepartmentRatings(const string& departmentName, const vector<TeamMembe
     file.close();
 }}
 int main() {
-    const char* envVarName = "FOLDER_PATH_ENV_VAR";
-    std::string folderPath = getFolderPathFromEnvVar(envVarName);
+    //const char* envVarName = "FOLDER_PATH_ENV_VAR";
+   // std::string folderPath = getFolderPathFromEnvVar(envVarName);
     std::string filename = "data.csv";
 
-    std::string fullFilePath = getFullFilePath(folderPath, filename);
+   // std::string fullFilePath = getFullFilePath(folderPath, filename);
 
-    std::ifstream inputFile(fullFilePath);
+    std::ifstream inputFile(filename);
     if (!inputFile.is_open()) {
         std::cerr << "Error: Unable to open the input CSV file.\n";
         return 1;
