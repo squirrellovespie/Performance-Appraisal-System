@@ -2,12 +2,17 @@
 #include <iostream>
 #include <vector>
 #include <limits>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
-string Dev_tasks[] = {"Taska", "Taskb", "Taskc"};
-string Dsg_tasks[] = {"Taskh", "Taskg", "Taskf"};
-string Arc_tasks[] = {"Taskp", "Taskq", "Taskr"};
+// string Dev_tasks[] = {"Taska", "Taskb", "Taskc"};
+// string Dsg_tasks[] = {"Taskh", "Taskg", "Taskf"};
+// string Arc_tasks[] = {"Taskp", "Taskq", "Taskr"};
+std::vector<std::string> Dev_tasks;
+std::vector<std::string> Dsg_tasks;
+std::vector<std::string> Arc_tasks;
 
 class TeamMember {
 public:
@@ -167,7 +172,7 @@ public:
     }
     void inputSelfRatings(){};
     void inputManagerRatings() {
-        cout << "Select employee:\n";
+        cout <<"Hello "<<this->name <<", Select employee:\n";
         for (size_t i = 0; i < employees.size(); i++) {
             cout << i + 1 << ". " << employees[i]->getName() << endl;
         }
@@ -217,14 +222,6 @@ public:
     }
 
     void inputHRRatings() {
-        // cout << "Select employee:\n";
-        // for (size_t i = 0; i < employees.size(); i++) {
-        //     cout << i + 1 << ". " << employees[i]->getName() << endl;
-        // }
-        // cout << "Enter choice: ";
-        // int empno;
-        // cin >> empno;
-        //if (empno >= 1 && empno <= static_cast<int>(employees.size())) {
         for(int j=1;j<=employees.size();j++){
             TeamMember* selectedEmployee = employees[j - 1];
             for (int i = 0; i < 3; i++) {
@@ -302,20 +299,58 @@ vector<TeamMember*> deepCopyVector(const vector<TeamMember*>& sourceVector) {
 int main() {
     vector<TeamMember*> deemployees;
 
-    deemployees.push_back(new Developer("Alice"));
-    deemployees.push_back(new Developer("Bob"));
-    deemployees.push_back(new Developer("Ryan"));
+    // deemployees.push_back(new Developer("Alice"));
+    // deemployees.push_back(new Developer("Bob"));
+    // deemployees.push_back(new Developer("Ryan"));
     vector<TeamMember*> dsemployees;
-    dsemployees.push_back(new Designer("Alex"));
-    dsemployees.push_back(new Designer("Bobby"));
-    dsemployees.push_back(new Designer("Ron"));
+    // dsemployees.push_back(new Designer("Alex"));
+    // dsemployees.push_back(new Designer("Bobby"));
+    // dsemployees.push_back(new Designer("Ron"));
     vector<TeamMember*> aremployees;
-    aremployees.push_back(new Architect("Ally"));
-    aremployees.push_back(new Architect("Brown"));
-    aremployees.push_back(new Architect("Rick"));
+    // aremployees.push_back(new Architect("Ally"));
+    // aremployees.push_back(new Architect("Brown"));
+    // aremployees.push_back(new Architect("Rick"));
 
     vector<TeamMember*> managers;
-    Manager m1("Dev Manager", deemployees),m2("Design Manager", dsemployees),m3("Architect Manager", aremployees);
+    std::ifstream file("data.txt");
+    if (!file.is_open()) {
+        std::cout << "Error opening the file 'employees.csv'." << std::endl;
+        return 1;
+    }
+
+    std::string line;
+    std::getline(file, line); // Skip the header row
+    while (std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string department, employeeName;
+        std::vector<std::string> tasks;
+
+        // Parse the CSV line
+        std::getline(iss, department, ',');
+        std::getline(iss, employeeName, ',');
+
+        std::string task;
+        while (std::getline(iss, task, ',')) {
+            tasks.push_back(task);
+        }
+
+        if (department == "Developer") {
+            deemployees.push_back(new Developer(employeeName));
+            Dev_tasks = tasks;
+            cout<<"dev"<<deemployees.size()<<endl;
+        } else if (department == "Designer") {
+            dsemployees.push_back(new Designer(employeeName));
+            Dsg_tasks = tasks;
+            cout<<"dev"<<Dsg_tasks.size()<<endl;
+        } else if (department == "Architect") {
+            aremployees.push_back(new Architect(employeeName));
+            Arc_tasks = tasks;
+            cout<<"dev"<<Arc_tasks.size()<<endl;
+        }
+    }
+
+    file.close();
+    Manager m1("Anand", deemployees),m2("Design Manager", dsemployees),m3("Architect Manager", aremployees);
     
     
     //managers.push_back(new Manager());
