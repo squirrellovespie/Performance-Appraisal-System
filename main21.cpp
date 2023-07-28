@@ -304,7 +304,48 @@ vector<TeamMember*> deepCopyVector(const vector<TeamMember*>& sourceVector) {
 
     return deepCopiedVector;
 }
+void printDepartmentRatings(const string& departmentName, const vector<TeamMember*>& employees) {
+    
+    double excellentPercent = 0.0, veryGoodPercent = 0.0, goodPercent = 0.0, averagePercent = 0.0, poorPercent = 0.0;
 
+    int totalEmployees = employees.size();
+    int excellentCount = 0, veryGoodCount = 0, goodCount = 0, averageCount = 0, poorCount = 0;
+
+    for (const auto& employee : employees) {
+        int overallRating = employee->HRRatings[3];
+        if (overallRating == 5) {
+            excellentCount++;
+        } else if (overallRating == 4) {
+            veryGoodCount++;
+        } else if (overallRating == 3) {
+            goodCount++;
+        } else if (overallRating == 2) {
+            averageCount++;
+        } else if (overallRating == 1) {
+            poorCount++;
+        }
+    }
+
+    excellentPercent = (static_cast<double>(excellentCount) / totalEmployees) * 100;
+    veryGoodPercent = (static_cast<double>(veryGoodCount) / totalEmployees) * 100;
+    goodPercent = (static_cast<double>(goodCount) / totalEmployees) * 100;
+    averagePercent = (static_cast<double>(averageCount) / totalEmployees) * 100;
+    poorPercent = (static_cast<double>(poorCount) / totalEmployees) * 100;
+
+    // Print percentages for the department
+    cout << departmentName << " Department Ratings Percentage:\n";
+    cout << "Excellent: " << excellentPercent << "%\n";
+    cout << "Very Good: " << veryGoodPercent << "%\n";
+    cout << "Good: " << goodPercent << "%\n";
+    cout << "Average: " << averagePercent << "%\n";
+    cout << "Poor: " << poorPercent << "%\n\n";
+    ofstream file("CEO.csv", ios::app);
+    if (!file.is_open()) {
+        cerr << "Error: Unable to open the file for writing." << endl;
+    }
+    file << departmentName << fixed << excellentPercent << veryGoodPercent << goodPercent << averagePercent << poorPercent << endl;
+    file.close();
+}
 int main() {
     vector<TeamMember*> deemployees;
  
@@ -528,134 +569,16 @@ int main() {
             cin >> ceo_choice;
             
             if(ceo_choice == 1){
-                double excellentPercent = 0.0, veryGoodPercent = 0.0, goodPercent = 0.0, averagePercent = 0.0, poorPercent = 0.0;
-
-                // Calculate percentages for the Developer department
-                int totalDevEmployees = deemployees.size();
-                int excellentCountDev = 0, veryGoodCountDev = 0, goodCountDev = 0, averageCountDev = 0, poorCountDev = 0;
-                for (const auto& employee : deemployees) {
-                    int overallRating = employee->HRRatings[3];
-                    if (overallRating == 5) {
-                        excellentCountDev++;
-                    } else if (overallRating == 4) {
-                        veryGoodCountDev++;
-                    } else if (overallRating == 3) {
-                        goodCountDev++;
-                    } else if (overallRating == 2) {
-                        averageCountDev++;
-                    } else if (overallRating == 1) {
-                        poorCountDev++;
-                    }
-                }
-
-                excellentPercent = (static_cast<double>(excellentCountDev) / totalDevEmployees) * 100;
-                veryGoodPercent = (static_cast<double>(veryGoodCountDev) / totalDevEmployees) * 100;
-                goodPercent = (static_cast<double>(goodCountDev) / totalDevEmployees) * 100;
-                averagePercent = (static_cast<double>(averageCountDev) / totalDevEmployees) * 100;
-                poorPercent = (static_cast<double>(poorCountDev) / totalDevEmployees) * 100;
-
-                // Print percentages for the Developer department
-                cout << "Developer Department Ratings Percentage:\n";
-                cout << "Excellent: " << excellentPercent << "%\n";
-                cout << "Very Good: " << veryGoodPercent << "%\n";
-                cout << "Good: " << goodPercent << "%\n";
-                cout << "Average: " << averagePercent << "%\n";
-                cout << "Poor: " << poorPercent << "%\n\n";
-                ofstream file("CEO.csv",ios::app);
-                if (!file.is_open()) {
-                    cerr << "Error: Unable to open the file for writing." << endl;
-        
-    }
-                file<<"Developer"<<fixed<<excellentPercent<<veryGoodPercent<<goodPercent<<averagePercent<<poorPercent<<endl;
-                file.close();
+                printDepartmentRatings("Developer", deemployees);
             }
             else if(ceo_choice == 2){
-                double excellentPercent = 0.0, veryGoodPercent = 0.0, goodPercent = 0.0, averagePercent = 0.0, poorPercent = 0.0;
-
-                // Calculate percentages for the Developer department
-                int totalDevEmployees = dsemployees.size();
-                int excellentCountDev = 0, veryGoodCountDev = 0, goodCountDev = 0, averageCountDev = 0, poorCountDev = 0;
-                for (const auto& employee : dsemployees) {
-                    int overallRating = employee->HRRatings[3];
-                    if (overallRating == 5) {
-                        excellentCountDev++;
-                    } else if (overallRating == 4) {
-                        veryGoodCountDev++;
-                    } else if (overallRating == 3) {
-                        goodCountDev++;
-                    } else if (overallRating == 2) {
-                        averageCountDev++;
-                    } else if (overallRating == 1) {
-                        poorCountDev++;
-                    }
-                }
-
-                excellentPercent = (static_cast<double>(excellentCountDev) / totalDevEmployees) * 100;
-                veryGoodPercent = (static_cast<double>(veryGoodCountDev) / totalDevEmployees) * 100;
-                goodPercent = (static_cast<double>(goodCountDev) / totalDevEmployees) * 100;
-                averagePercent = (static_cast<double>(averageCountDev) / totalDevEmployees) * 100;
-                poorPercent = (static_cast<double>(poorCountDev) / totalDevEmployees) * 100;
-
-                // Print percentages for the Developer department
-                cout << "Design Department Ratings Percentage:\n";
-                cout << "Excellent: " << excellentPercent << "%\n";
-                cout << "Very Good: " << veryGoodPercent << "%\n";
-                cout << "Good: " << goodPercent << "%\n";
-                cout << "Average: " << averagePercent << "%\n";
-                cout << "Poor: " << poorPercent << "%\n\n";
-                ofstream file("CEO.csv",ios::app);
-                if (!file.is_open()) {
-                    cerr << "Error: Unable to open the file for writing." << endl;
-        
-    }
-                file<<"Design"<<fixed<<excellentPercent<<veryGoodPercent<<goodPercent<<averagePercent<<poorPercent<<endl;
-                file.close();
-            }
-            else if(ceo_choice==3){
+                printDepartmentRatings("Designer", dsemployees);
                 
-                double excellentPercent = 0.0, veryGoodPercent = 0.0, goodPercent = 0.0, averagePercent = 0.0, poorPercent = 0.0;
-
-                // Calculate percentages for the Developer department
-                int totalDevEmployees = aremployees.size();
-                int excellentCountDev = 0, veryGoodCountDev = 0, goodCountDev = 0, averageCountDev = 0, poorCountDev = 0;
-                for (const auto& employee : aremployees) {
-                    int overallRating = employee->HRRatings[3];
-                    if (overallRating == 5) {
-                        excellentCountDev++;
-                    } else if (overallRating == 4) {
-                        veryGoodCountDev++;
-                    } else if (overallRating == 3) {
-                        goodCountDev++;
-                    } else if (overallRating == 2) {
-                        averageCountDev++;
-                    } else if (overallRating == 1) {
-                        poorCountDev++;
-                    }
                 }
+            else if(ceo_choice==3){
+                printDepartmentRatings("Architect", dsemployees);
             }
-
-                excellentPercent = (static_cast<double>(excellentCountDev) / totalDevEmployees) * 100;
-                veryGoodPercent = (static_cast<double>(veryGoodCountDev) / totalDevEmployees) * 100;
-                goodPercent = (static_cast<double>(goodCountDev) / totalDevEmployees) * 100;
-                averagePercent = (static_cast<double>(averageCountDev) / totalDevEmployees) * 100;
-                poorPercent = (static_cast<double>(poorCountDev) / totalDevEmployees) * 100;
-
-                // Print percentages for the Developer department
-                cout << "Architect Department Ratings Percentage:\n";
-                cout << "Excellent: " << excellentPercent << "%\n";
-                cout << "Very Good: " << veryGoodPercent << "%\n";
-                cout << "Good: " << goodPercent << "%\n";
-                cout << "Average: " << averagePercent << "%\n";
-                cout << "Poor: " << poorPercent << "%\n\n";
-                fstream file("CEO.csv",ios::app);
-                if (!file.is_open()) {
-                    cerr << "Error: Unable to open the file for writing." << endl;
-        
-    }
-                file<<"Architect"<<fixed<<excellentPercent<<veryGoodPercent<<goodPercent<<averagePercent<<poorPercent<<endl;
-                file.close();
-            }
-            }
+            
             else if(ceo_choice==4) break;  
             else {
                     cout << "Invalid Input.....Redirecting to Main Menu......\n";
