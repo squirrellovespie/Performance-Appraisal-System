@@ -5,11 +5,31 @@
 #include <fstream>
 #include <string>
 using namespace std;
+//ENV VAR PART
+std::string getFolderPathFromEnvVar(const char* envVarName) {
+    char* envVarValue = std::getenv(envVarName);
+    if (envVarValue == nullptr) {
+        std::cerr << "Environment variable " << envVarName << " not set." << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    return std::string(envVarValue);
+}
 
-string Dev_tasks[] = {"Taska", "Taskb", "Taskc","OverallRating"};
-string Dsg_tasks[] = {"Taskh", "Taskg", "Taskf","OverallRating"};
-string Arc_tasks[] = {"Taskp", "Taskq", "Taskr","OverallRating"};
-
+std::string getFullFilePath(const std::string& folderPath, const std::string& filename) {
+    // Assuming the folder path doesn't end with a separator, add one before appending the filename
+    char pathSeparator = '/'; // Adjust this based on your target platform (e.g., '\\' on Windows)
+    if (folderPath.back() != pathSeparator) {
+        return folderPath + pathSeparator + filename;
+    }
+    return folderPath + filename;
+}
+namespace Company{
+// string Dev_tasks[] = {"Taska", "Taskb", "Taskc","OverallRating"};
+// string Dsg_tasks[] = {"Taskh", "Taskg", "Taskf","OverallRating"};
+// string Arc_tasks[] = {"Taskp", "Taskq", "Taskr","OverallRating"};
+std::vector<std::string> Dev_tasks;
+std::vector<std::string> Dsg_tasks;
+std::vector<std::string> Arc_tasks;
 class TeamMember {
 public:
     TeamMember(string name) : name(name) {}
@@ -171,7 +191,7 @@ public:
     }
     void inputSelfRatings(){};
     void inputManagerRatings() {
-        cout << "Select employee:\n";
+        cout <<"Hello "<<this->name<< "! Select employee:\n";
         for (size_t i = 0; i < employees.size(); i++) {
             cout << i + 1 << ". " << employees[i]->getName() << endl;
         }
@@ -237,7 +257,7 @@ public:
             }
             cout << "Enter overall HR rating for "<<selectedEmployee->name<<": ";
             cin >> selectedEmployee->HRRatings[3];
-            for(int i=0;i<4;i++){cout<<selectedEmployee->HRRatings[i]<<endl;}  
+            //for(int i=0;i<4;i++){cout<<selectedEmployee->HRRatings[i]<<endl;}  
         }
         if (!checkConstraints()) {
                 cout << "Constraints violated for this department. Please reassign ratings.\n";
@@ -345,23 +365,17 @@ void printDepartmentRatings(const string& departmentName, const vector<TeamMembe
     }
     file << departmentName <<","<< excellentPercent <<","<<  veryGoodPercent <<","<<  goodPercent <<","<<  averagePercent <<","<<  poorPercent << endl;
     file.close();
-}
+}}
 int main() {
-    // deemployees.push_back(new Developer("Alice"));
-    // deemployees.push_back(new Developer("Bob"));
-    // deemployees.push_back(new Developer("Ryan"));
-    // vector<TeamMember*> dsemployees;
-    // dsemployees.push_back(new Designer("Alex"));
-    // dsemployees.push_back(new Designer("Bobby"));
-    // dsemployees.push_back(new Designer("Ron"));
-    // vector<TeamMember*> aremployees;
-    // aremployees.push_back(new Architect("Ally"));
-    // aremployees.push_back(new Architect("Brown"));
-    // aremployees.push_back(new Architect("Rick"));
+    const char* envVarName = "FOLDER_PATH_ENV_VAR";
+    std::string folderPath = getFolderPathFromEnvVar(envVarName);
+    std::string filename = "idk.csv";
 
-    ifstream inputFile("idk.csv");
+    std::string fullFilePath = getFullFilePath(folderPath, filename);
+
+    std::ifstream inputFile(fullFilePath);
     if (!inputFile.is_open()) {
-        cerr << "Error: Unable to open the input CSV file.\n";
+        std::cerr << "Error: Unable to open the input CSV file.\n";
         return 1;
     }
 
@@ -369,7 +383,7 @@ int main() {
     string header;
     getline(inputFile, header);
 
-    vector<string> devNames, devTasks, dsgNames, dsgTasks, arcNames, arcTasks;
+    vector<string> devNames, dsgNames,arcNames;
     string line;
 
     while (getline(inputFile, line)) {
@@ -384,35 +398,35 @@ int main() {
         getline(ss, arcTask, ',');
 
         devNames.push_back(devName);
-        devTasks.push_back(devTask);
+        Company::Dev_tasks.push_back(devTask);
         dsgNames.push_back(dsgName);
-        dsgTasks.push_back(dsgTask);
+        Company::Dsg_tasks.push_back(dsgTask);
         arcNames.push_back(arcName);
-        arcTasks.push_back(arcTask);
+        Company::Arc_tasks.push_back(arcTask);
     }
 
     // Create deemployees, dsemployees, and aremployees based on the data read from the CSV file
-    vector<TeamMember*> deemployees;
-    vector<TeamMember*> dsemployees;
-    vector<TeamMember*> aremployees;
+    vector<Company::TeamMember*> deemployees;
+    vector<Company::TeamMember*> dsemployees;
+    vector<Company::TeamMember*> aremployees;
 
     // Add Developer objects to deemployees
     for (const auto& devName : devNames) {
-        deemployees.push_back(new Developer(devName));
+        deemployees.push_back(new Company::Developer(devName));
     }
 
     // Add Designer objects to dsemployees
     for (const auto& dsgName : dsgNames) {
-        dsemployees.push_back(new Designer(dsgName));
+        dsemployees.push_back(new Company::Designer(dsgName));
     }
 
     // Add Architect objects to aremployees
     for (const auto& arcName : arcNames) {
-        aremployees.push_back(new Architect(arcName));
+        aremployees.push_back(new Company::Architect(arcName));
     }
 
-    vector<TeamMember*> managers;
-    Manager m1("Dev Manager", deemployees),m2("Design Manager", dsemployees),m3("Architect Manager", aremployees);
+    vector<Company::TeamMember*> managers;
+    Company::Manager m1("Anand", deemployees),m2("Design Manager", dsemployees),m3("Architect Manager", aremployees);
     
     
     //managers.push_back(new Manager());
@@ -443,10 +457,10 @@ int main() {
             cin >> mgr_choice;
             if (mgr_choice == 4) break;
             if (!(mgr_choice>=1 && mgr_choice<=4)) continue;
-            vector<TeamMember> mgr_arr;
+            vector<Company::TeamMember> mgr_arr;
             int mgr_type;
             //mgr_choice==1 ? mgr_arr.assign(devmgr.begin(), devmgr.end()) : mgr_choice==2 ? mgr_arr.assign(dsgmgr.begin(), dsgmgr.end()) : mgr_arr.assign(arcmgr.begin(), arcmgr.end());
-            Manager* selectedManager = nullptr;
+            Company::Manager* selectedManager = nullptr;
             if (mgr_choice == 1) {
                 selectedManager = &m1;
             } else if (mgr_choice == 2) {
@@ -477,7 +491,7 @@ int main() {
                 cin >> empno;
                 if (empno == deemployees.size() + 1) break;
                 if (empno >= 1 && empno <= static_cast<int>(deemployees.size())) {
-                    Developer* selectedDeveloper = dynamic_cast<Developer*>(deemployees[empno - 1]);
+                    Company::Developer* selectedDeveloper = dynamic_cast<Company::Developer*>(deemployees[empno - 1]);
                     if (selectedDeveloper) {
                         selectedDeveloper->inputSelfRatings();
                     } else {
@@ -501,7 +515,7 @@ int main() {
                 cin >> empno;
                 if (empno == dsemployees.size() + 1) break;
                 if (empno >= 1 && empno <= static_cast<int>(dsemployees.size())) {
-                    Designer* selectedDesigner = dynamic_cast<Designer*>(dsemployees[empno - 1]);
+                    Company::Designer* selectedDesigner = dynamic_cast<Company::Designer*>(dsemployees[empno - 1]);
                     if (selectedDesigner) {
                         selectedDesigner->inputSelfRatings();
                     } else {
@@ -524,7 +538,7 @@ int main() {
                 cin >> empno;
                 if (empno == aremployees.size() + 1) break;
                 if (empno >= 1 && empno <= static_cast<int>(aremployees.size())) {
-                    Architect* selectedArch = dynamic_cast<Architect*>(aremployees[empno - 1]);
+                    Company::Architect* selectedArch = dynamic_cast<Company::Architect*>(aremployees[empno - 1]);
                     if (selectedArch) {
                         selectedArch->inputSelfRatings();
                     } else {
@@ -558,7 +572,7 @@ int main() {
                 cout << "Manager ratings\n";
                 cout<<"----------------\n";
                 m1.printManagerRatings(); // Call printRatings() of Manager class for developers
-                HR hr("HR Name", deemployees); // Create an instance of HR class
+                Company::HR hr("HR Name", deemployees); // Create an instance of HR class
                 hr.inputHRRatings();
                 hr.printHRRatings();
             }
@@ -575,7 +589,7 @@ int main() {
                 cout << "Manager ratings\n";
                 cout<<"----------------\n";
                 m2.printManagerRatings(); // Call printRatings() of Manager class for developers
-                HR hr("HR Name",dsemployees);
+                Company::HR hr("HR Name",dsemployees);
                 hr.inputHRRatings();
                 hr.printHRRatings();
             }
@@ -592,7 +606,7 @@ int main() {
                 cout << "Manager ratings\n";
                 cout<<"----------------\n";
                 m3.printManagerRatings();
-                HR hr("HR Name",aremployees);
+                Company::HR hr("HR Name",aremployees);
                 hr.inputHRRatings();
                 hr.printHRRatings();
             }
