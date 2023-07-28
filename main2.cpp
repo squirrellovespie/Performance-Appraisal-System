@@ -1,19 +1,35 @@
-
 #include <iostream>
-#include <vector>
 #include <limits>
-#include <fstream>
+#include <vector>
 #include <sstream>
-
+#include <fstream>
+#include <string>
 using namespace std;
+//ENV VAR PART
+std::string getFolderPathFromEnvVar(const char* envVarName) {
+    char* envVarValue = std::getenv(envVarName);
+    if (envVarValue == nullptr) {
+        std::cerr << "Environment variable " << envVarName << " not set." << std::endl;
+        exit(EXIT_FAILURE);
+    }
+    return std::string(envVarValue);
+}
 
-// string Dev_tasks[] = {"Taska", "Taskb", "Taskc"};
-// string Dsg_tasks[] = {"Taskh", "Taskg", "Taskf"};
-// string Arc_tasks[] = {"Taskp", "Taskq", "Taskr"};
+std::string getFullFilePath(const std::string& folderPath, const std::string& filename) {
+    // Assuming the folder path doesn't end with a separator, add one before appending the filename
+    char pathSeparator = '/'; // Adjust this based on your target platform (e.g., '\\' on Windows)
+    if (folderPath.back() != pathSeparator) {
+        return folderPath + pathSeparator + filename;
+    }
+    return folderPath + filename;
+}
+namespace Company{
+// string Dev_tasks[] = {"Taska", "Taskb", "Taskc","OverallRating"};
+// string Dsg_tasks[] = {"Taskh", "Taskg", "Taskf","OverallRating"};
+// string Arc_tasks[] = {"Taskp", "Taskq", "Taskr","OverallRating"};
 std::vector<std::string> Dev_tasks;
 std::vector<std::string> Dsg_tasks;
 std::vector<std::string> Arc_tasks;
-
 class TeamMember {
 public:
     TeamMember(string name) : name(name) {}
@@ -29,16 +45,19 @@ public:
     void printSelfRatings() const {
         for (int i = 0; i < 4; i++) {
             cout << getTaskName(i) << "\t" << Selfratings[i] << "\n";
+            
         }
     }
     void printManagerRatings() const {
         for (int i = 0; i < 4; i++) {
             cout << getTaskName(i) << "\t" << managerRatings[i] << "\n";
+            
         }
     }
     void printHRRatings() const {
         for (int i = 0; i < 4; i++) {
             cout << getTaskName(i) << "\t" << HRRatings[i] << "\n";
+            
         }
     }
 
@@ -172,7 +191,7 @@ public:
     }
     void inputSelfRatings(){};
     void inputManagerRatings() {
-        cout <<"Hello "<<this->name <<", Select employee:\n";
+        cout << "Select employee:\n";
         for (size_t i = 0; i < employees.size(); i++) {
             cout << i + 1 << ". " << employees[i]->getName() << endl;
         }
@@ -222,6 +241,14 @@ public:
     }
 
     void inputHRRatings() {
+        // cout << "Select employee:\n";
+        // for (size_t i = 0; i < employees.size(); i++) {
+        //     cout << i + 1 << ". " << employees[i]->getName() << endl;
+        // }
+        // cout << "Enter choice: ";
+        // int empno;
+        // cin >> empno;
+        //if (empno >= 1 && empno <= static_cast<int>(employees.size())) {
         for(int j=1;j<=employees.size();j++){
             TeamMember* selectedEmployee = employees[j - 1];
             for (int i = 0; i < 3; i++) {
@@ -239,7 +266,9 @@ public:
     }
 
     void printHRRatings() {
+         cout<<"--------------------------\n";
         cout << "HR Ratings for Employees:\n";
+         cout<<"--------------------------\n";
         for (const auto& employee : employees) {
             cout << "Employee: " << employee->getName() << endl;
             employee->printHRRatings(); // Call printHRRatings() of derived classes
@@ -295,62 +324,109 @@ vector<TeamMember*> deepCopyVector(const vector<TeamMember*>& sourceVector) {
 
     return deepCopiedVector;
 }
+void printDepartmentRatings(const string& departmentName, const vector<TeamMember*>& employees) {
+    
+    double excellentPercent = 0.0, veryGoodPercent = 0.0, goodPercent = 0.0, averagePercent = 0.0, poorPercent = 0.0;
 
-int main() {
-    vector<TeamMember*> deemployees;
+    int totalEmployees = employees.size();
+    int excellentCount = 0, veryGoodCount = 0, goodCount = 0, averageCount = 0, poorCount = 0;
 
-    // deemployees.push_back(new Developer("Alice"));
-    // deemployees.push_back(new Developer("Bob"));
-    // deemployees.push_back(new Developer("Ryan"));
-    vector<TeamMember*> dsemployees;
-    // dsemployees.push_back(new Designer("Alex"));
-    // dsemployees.push_back(new Designer("Bobby"));
-    // dsemployees.push_back(new Designer("Ron"));
-    vector<TeamMember*> aremployees;
-    // aremployees.push_back(new Architect("Ally"));
-    // aremployees.push_back(new Architect("Brown"));
-    // aremployees.push_back(new Architect("Rick"));
+    for (const auto& employee : employees) {
+        int overallRating = employee->HRRatings[3];
+        if (overallRating == 5) {
+            excellentCount++;
+        } else if (overallRating == 4) {
+            veryGoodCount++;
+        } else if (overallRating == 3) {
+            goodCount++;
+        } else if (overallRating == 2) {
+            averageCount++;
+        } else if (overallRating == 1) {
+            poorCount++;
+        }
+    }
 
-    vector<TeamMember*> managers;
-    std::ifstream file("data.txt");
+    excellentPercent = (static_cast<double>(excellentCount) / totalEmployees) * 100;
+    veryGoodPercent = (static_cast<double>(veryGoodCount) / totalEmployees) * 100;
+    goodPercent = (static_cast<double>(goodCount) / totalEmployees) * 100;
+    averagePercent = (static_cast<double>(averageCount) / totalEmployees) * 100;
+    poorPercent = (static_cast<double>(poorCount) / totalEmployees) * 100;
+
+    // Print percentages for the department
+    cout << departmentName << " Department Ratings Percentage:\n";
+    cout << "Excellent: " << excellentPercent << "%\n";
+    cout << "Very Good: " << veryGoodPercent << "%\n";
+    cout << "Good: " << goodPercent << "%\n";
+    cout << "Average: " << averagePercent << "%\n";
+    cout << "Poor: " << poorPercent << "%\n\n";
+    ofstream file("CEO.csv", ios::app);
     if (!file.is_open()) {
-        std::cout << "Error opening the file 'employees.csv'." << std::endl;
+        cerr << "Error: Unable to open the file for writing." << endl;
+    }
+    file << departmentName <<","<< excellentPercent <<","<<  veryGoodPercent <<","<<  goodPercent <<","<<  averagePercent <<","<<  poorPercent << endl;
+    file.close();
+}}
+int main() {
+    const char* envVarName = "FOLDER_PATH_ENV_VAR";
+    std::string folderPath = getFolderPathFromEnvVar(envVarName);
+    std::string filename = "idk.csv";
+
+    std::string fullFilePath = getFullFilePath(folderPath, filename);
+
+    std::ifstream inputFile(fullFilePath);
+    if (!inputFile.is_open()) {
+        std::cerr << "Error: Unable to open the input CSV file.\n";
         return 1;
     }
 
-    std::string line;
-    std::getline(file, line); // Skip the header row
-    while (std::getline(file, line)) {
-        std::istringstream iss(line);
-        std::string department, employeeName;
-        std::vector<std::string> tasks;
+    // Skip the header line
+    string header;
+    getline(inputFile, header);
 
-        // Parse the CSV line
-        std::getline(iss, department, ',');
-        std::getline(iss, employeeName, ',');
+    vector<string> devNames, dsgNames,arcNames;
+    string line;
 
-        std::string task;
-        while (std::getline(iss, task, ',')) {
-            tasks.push_back(task);
-        }
+    while (getline(inputFile, line)) {
+        stringstream ss(line);
+        string devName, devTask, dsgName, dsgTask, arcName, arcTask;
 
-        if (department == "Developer") {
-            deemployees.push_back(new Developer(employeeName));
-            Dev_tasks = tasks;
-            cout<<"dev"<<deemployees.size()<<endl;
-        } else if (department == "Designer") {
-            dsemployees.push_back(new Designer(employeeName));
-            Dsg_tasks = tasks;
-            cout<<"dev"<<Dsg_tasks.size()<<endl;
-        } else if (department == "Architect") {
-            aremployees.push_back(new Architect(employeeName));
-            Arc_tasks = tasks;
-            cout<<"dev"<<Arc_tasks.size()<<endl;
-        }
+        getline(ss, devName, ',');
+        getline(ss, devTask, ',');
+        getline(ss, dsgName, ',');
+        getline(ss, dsgTask, ',');
+        getline(ss, arcName, ',');
+        getline(ss, arcTask, ',');
+
+        devNames.push_back(devName);
+        Company::Dev_tasks.push_back(devTask);
+        dsgNames.push_back(dsgName);
+        Company::Dsg_tasks.push_back(dsgTask);
+        arcNames.push_back(arcName);
+        Company::Arc_tasks.push_back(arcTask);
     }
 
-    file.close();
-    Manager m1("Anand", deemployees),m2("Design Manager", dsemployees),m3("Architect Manager", aremployees);
+    // Create deemployees, dsemployees, and aremployees based on the data read from the CSV file
+    vector<Company::TeamMember*> deemployees;
+    vector<Company::TeamMember*> dsemployees;
+    vector<Company::TeamMember*> aremployees;
+
+    // Add Developer objects to deemployees
+    for (const auto& devName : devNames) {
+        deemployees.push_back(new Company::Developer(devName));
+    }
+
+    // Add Designer objects to dsemployees
+    for (const auto& dsgName : dsgNames) {
+        dsemployees.push_back(new Company::Designer(dsgName));
+    }
+
+    // Add Architect objects to aremployees
+    for (const auto& arcName : arcNames) {
+        aremployees.push_back(new Company::Architect(arcName));
+    }
+
+    vector<Company::TeamMember*> managers;
+    Company::Manager m1("Dev Manager", deemployees),m2("Design Manager", dsemployees),m3("Architect Manager", aremployees);
     
     
     //managers.push_back(new Manager());
@@ -381,10 +457,10 @@ int main() {
             cin >> mgr_choice;
             if (mgr_choice == 4) break;
             if (!(mgr_choice>=1 && mgr_choice<=4)) continue;
-            vector<TeamMember> mgr_arr;
+            vector<Company::TeamMember> mgr_arr;
             int mgr_type;
             //mgr_choice==1 ? mgr_arr.assign(devmgr.begin(), devmgr.end()) : mgr_choice==2 ? mgr_arr.assign(dsgmgr.begin(), dsgmgr.end()) : mgr_arr.assign(arcmgr.begin(), arcmgr.end());
-            Manager* selectedManager = nullptr;
+            Company::Manager* selectedManager = nullptr;
             if (mgr_choice == 1) {
                 selectedManager = &m1;
             } else if (mgr_choice == 2) {
@@ -415,7 +491,7 @@ int main() {
                 cin >> empno;
                 if (empno == deemployees.size() + 1) break;
                 if (empno >= 1 && empno <= static_cast<int>(deemployees.size())) {
-                    Developer* selectedDeveloper = dynamic_cast<Developer*>(deemployees[empno - 1]);
+                    Company::Developer* selectedDeveloper = dynamic_cast<Company::Developer*>(deemployees[empno - 1]);
                     if (selectedDeveloper) {
                         selectedDeveloper->inputSelfRatings();
                     } else {
@@ -439,7 +515,7 @@ int main() {
                 cin >> empno;
                 if (empno == dsemployees.size() + 1) break;
                 if (empno >= 1 && empno <= static_cast<int>(dsemployees.size())) {
-                    Designer* selectedDesigner = dynamic_cast<Designer*>(dsemployees[empno - 1]);
+                    Company::Designer* selectedDesigner = dynamic_cast<Company::Designer*>(dsemployees[empno - 1]);
                     if (selectedDesigner) {
                         selectedDesigner->inputSelfRatings();
                     } else {
@@ -462,7 +538,7 @@ int main() {
                 cin >> empno;
                 if (empno == aremployees.size() + 1) break;
                 if (empno >= 1 && empno <= static_cast<int>(aremployees.size())) {
-                    Architect* selectedArch = dynamic_cast<Architect*>(aremployees[empno - 1]);
+                    Company::Architect* selectedArch = dynamic_cast<Company::Architect*>(aremployees[empno - 1]);
                     if (selectedArch) {
                         selectedArch->inputSelfRatings();
                     } else {
@@ -486,39 +562,51 @@ int main() {
             if (hr_choice == 1) {
                 cout << "Here is a list of all the development team members and their ratings.\n";
                 cout << "Self ratings\n";
+                cout<<"----------------\n";
                 for (const auto& developer : deemployees) {
-                    developer->printSelfRatings(); // Call printRatings() of Developer class
+                    cout<<"Employee :"<<developer->getName()<<endl;
+                    developer->printSelfRatings();
+                    cout<<endl; // Call printRatings() of Developer class
                 }
 
                 cout << "Manager ratings\n";
+                cout<<"----------------\n";
                 m1.printManagerRatings(); // Call printRatings() of Manager class for developers
-                HR hr("HR Name", deemployees); // Create an instance of HR class
+                Company::HR hr("HR Name", deemployees); // Create an instance of HR class
                 hr.inputHRRatings();
                 hr.printHRRatings();
             }
             else if (hr_choice == 2) {
                 cout << "Here is a list of all the design team members and their ratings.\n";
                 cout << "Self ratings\n";
+                cout<<"----------------\n";
                 for (const auto& designer : dsemployees) {
+                    cout<<"Employee :"<<designer->getName()<<endl;
                     designer->printSelfRatings();
+                    cout<<endl;
                 }
 
                 cout << "Manager ratings\n";
+                cout<<"----------------\n";
                 m2.printManagerRatings(); // Call printRatings() of Manager class for developers
-                HR hr("HR Name",dsemployees);
+                Company::HR hr("HR Name",dsemployees);
                 hr.inputHRRatings();
                 hr.printHRRatings();
             }
             else if (hr_choice == 3) {
                 cout << "Here is a list of all the architecture team members and their ratings.\n";
                 cout << "Self ratings\n";
+                cout<<"----------------\n";
                 for (const auto& architect : aremployees) {
+                    cout<<"Employee :"<<architect->getName()<<endl;
                     architect->printSelfRatings();
+                    cout<<endl;
                 }
 
                 cout << "Manager ratings\n";
+                cout<<"----------------\n";
                 m3.printManagerRatings();
-                HR hr("HR Name",aremployees);
+                Company::HR hr("HR Name",aremployees);
                 hr.inputHRRatings();
                 hr.printHRRatings();
             }
@@ -532,7 +620,8 @@ int main() {
             }
 
  
-        } else if (choice == 6) {
+        } 
+        else if (choice == 6) {
             cout << "Pick a department to view scores and view reports.\n";
             cout << "1. Developer\n";
             cout << "2. Designer\n";
@@ -541,113 +630,18 @@ int main() {
             cout << "Enter choice: ";
             int ceo_choice;
             cin >> ceo_choice;
+            
             if(ceo_choice == 1){
-                double excellentPercent = 0.0, veryGoodPercent = 0.0, goodPercent = 0.0, averagePercent = 0.0, poorPercent = 0.0;
-
-                // Calculate percentages for the Developer department
-                int totalDevEmployees = deemployees.size();
-                int excellentCountDev = 0, veryGoodCountDev = 0, goodCountDev = 0, averageCountDev = 0, poorCountDev = 0;
-                for (const auto& employee : deemployees) {
-                    int overallRating = employee->HRRatings[3];
-                    if (overallRating == 5) {
-                        excellentCountDev++;
-                    } else if (overallRating == 4) {
-                        veryGoodCountDev++;
-                    } else if (overallRating == 3) {
-                        goodCountDev++;
-                    } else if (overallRating == 2) {
-                        averageCountDev++;
-                    } else if (overallRating == 1) {
-                        poorCountDev++;
-                    }
-                }
-
-                excellentPercent = (static_cast<double>(excellentCountDev) / totalDevEmployees) * 100;
-                veryGoodPercent = (static_cast<double>(veryGoodCountDev) / totalDevEmployees) * 100;
-                goodPercent = (static_cast<double>(goodCountDev) / totalDevEmployees) * 100;
-                averagePercent = (static_cast<double>(averageCountDev) / totalDevEmployees) * 100;
-                poorPercent = (static_cast<double>(poorCountDev) / totalDevEmployees) * 100;
-
-                // Print percentages for the Developer department
-                cout << "Developer Department Ratings Percentage:\n";
-                cout << "Excellent: " << excellentPercent << "%\n";
-                cout << "Very Good: " << veryGoodPercent << "%\n";
-                cout << "Good: " << goodPercent << "%\n";
-                cout << "Average: " << averagePercent << "%\n";
-                cout << "Poor: " << poorPercent << "%\n\n";
+                printDepartmentRatings("Developer", deemployees);
             }
             else if(ceo_choice == 2){
-                double excellentPercent = 0.0, veryGoodPercent = 0.0, goodPercent = 0.0, averagePercent = 0.0, poorPercent = 0.0;
-
-                // Calculate percentages for the Developer department
-                int totalDevEmployees = dsemployees.size();
-                int excellentCountDev = 0, veryGoodCountDev = 0, goodCountDev = 0, averageCountDev = 0, poorCountDev = 0;
-                for (const auto& employee : dsemployees) {
-                    int overallRating = employee->HRRatings[3];
-                    if (overallRating == 5) {
-                        excellentCountDev++;
-                    } else if (overallRating == 4) {
-                        veryGoodCountDev++;
-                    } else if (overallRating == 3) {
-                        goodCountDev++;
-                    } else if (overallRating == 2) {
-                        averageCountDev++;
-                    } else if (overallRating == 1) {
-                        poorCountDev++;
-                    }
+                printDepartmentRatings("Designer", dsemployees);
+                
                 }
-
-                excellentPercent = (static_cast<double>(excellentCountDev) / totalDevEmployees) * 100;
-                veryGoodPercent = (static_cast<double>(veryGoodCountDev) / totalDevEmployees) * 100;
-                goodPercent = (static_cast<double>(goodCountDev) / totalDevEmployees) * 100;
-                averagePercent = (static_cast<double>(averageCountDev) / totalDevEmployees) * 100;
-                poorPercent = (static_cast<double>(poorCountDev) / totalDevEmployees) * 100;
-
-                // Print percentages for the Developer department
-                cout << "Design Department Ratings Percentage:\n";
-                cout << "Excellent: " << excellentPercent << "%\n";
-                cout << "Very Good: " << veryGoodPercent << "%\n";
-                cout << "Good: " << goodPercent << "%\n";
-                cout << "Average: " << averagePercent << "%\n";
-                cout << "Poor: " << poorPercent << "%\n\n";
-            }
             else if(ceo_choice==3){
-                if(ceo_choice == 1){
-                double excellentPercent = 0.0, veryGoodPercent = 0.0, goodPercent = 0.0, averagePercent = 0.0, poorPercent = 0.0;
-
-                // Calculate percentages for the Developer department
-                int totalDevEmployees = aremployees.size();
-                int excellentCountDev = 0, veryGoodCountDev = 0, goodCountDev = 0, averageCountDev = 0, poorCountDev = 0;
-                for (const auto& employee : aremployees) {
-                    int overallRating = employee->HRRatings[3];
-                    if (overallRating == 5) {
-                        excellentCountDev++;
-                    } else if (overallRating == 4) {
-                        veryGoodCountDev++;
-                    } else if (overallRating == 3) {
-                        goodCountDev++;
-                    } else if (overallRating == 2) {
-                        averageCountDev++;
-                    } else if (overallRating == 1) {
-                        poorCountDev++;
-                    }
-                }
-
-                excellentPercent = (static_cast<double>(excellentCountDev) / totalDevEmployees) * 100;
-                veryGoodPercent = (static_cast<double>(veryGoodCountDev) / totalDevEmployees) * 100;
-                goodPercent = (static_cast<double>(goodCountDev) / totalDevEmployees) * 100;
-                averagePercent = (static_cast<double>(averageCountDev) / totalDevEmployees) * 100;
-                poorPercent = (static_cast<double>(poorCountDev) / totalDevEmployees) * 100;
-
-                // Print percentages for the Developer department
-                cout << "Architect Department Ratings Percentage:\n";
-                cout << "Excellent: " << excellentPercent << "%\n";
-                cout << "Very Good: " << veryGoodPercent << "%\n";
-                cout << "Good: " << goodPercent << "%\n";
-                cout << "Average: " << averagePercent << "%\n";
-                cout << "Poor: " << poorPercent << "%\n\n";
+                printDepartmentRatings("Architect", dsemployees);
             }
-            }
+            
             else if(ceo_choice==4) break;  
             else {
                     cout << "Invalid Input.....Redirecting to Main Menu......\n";
@@ -665,3 +659,4 @@ int main() {
 
     return 0;
 }
+
